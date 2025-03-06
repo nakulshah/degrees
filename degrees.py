@@ -77,10 +77,10 @@ def main():
     else:
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
-        path = [(None, source)] + path
+        path = [(None, people[source]["name"])] + path
         for i in range(degrees):
-            person1 = people[path[i][1]]["name"]
-            person2 = people[path[i + 1][1]]["name"]
+            person1 = people[person_id_for_name(path[i][1])]["name"]
+            person2 = people[person_id_for_name(path[i + 1][1])]["name"]
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
@@ -92,17 +92,17 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    # TODO
-    print(f"Finding the shortest path between the source={source} and target={target}")
 
     # Keep track of number of states (movies) explored
     num_explored = 0
 
     # Set the start node
-    startPerson: object = people[source]
+    startPerson = people[source]
 
     # Set the target node
-    targetPerson: object = people[target]
+    targetPerson = people[target]
+
+    print(f"Finding the shortest path between the source={startPerson["name"]} and target={targetPerson["name"]}")
     
     # Initialize frontier to just the starting position
     start = Node(state=startPerson, parent=None, action=None)
@@ -123,7 +123,7 @@ def shortest_path(source, target):
         num_explored += 1
 
         # If the node is target, then we have a solution
-        if node.state["name"] == target:
+        if node.state["name"] == targetPerson["name"]:
             path = []
             while node.parent is not None:
                 path.append((node.action, node.state["name"]))
