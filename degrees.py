@@ -96,13 +96,7 @@ def shortest_path(source, target):
     # Keep track of number of states (movies) explored
     num_explored = 0
 
-    # Set the start node
-    startPerson = people[source]
-
-    # Set the target node
-    targetPerson = people[target]
-
-    print(f"Finding the shortest path between the source={startPerson["name"]} and target={targetPerson["name"]}")
+    print(f"Finding the shortest path between the source={people[source]["name"]} and target={people[target]["name"]}")
     
     # Initialize frontier to just the starting position
     start = Node(state=source, parent=None, action=None)
@@ -116,7 +110,7 @@ def shortest_path(source, target):
     while True:
         # If nothing left in frontier, then no path
         if frontier.empty():
-            raise Exception("no connection between source and target")
+            return None
 
         # Choose a node from the frontier
         node = frontier.remove()
@@ -129,6 +123,7 @@ def shortest_path(source, target):
                 path.append((node.action, node.state))
                 node = node.parent
             path.reverse()
+            print(f"Number of states (people) explored: {num_explored}")
             return path
 
         # Mark node as explored
@@ -172,7 +167,6 @@ def neighbors_for_person(person_id):
     Accepts the person id and returns (movie_id, person_id) pairs for people
     who starred with a given person.
     """
-    #person_id = person_id_for_name(person_name)
     movie_ids = people[person_id]["movies"]
     neighbors = set()
     for movie_id in movie_ids:
