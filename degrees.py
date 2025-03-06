@@ -1,5 +1,6 @@
 import csv
 import sys
+import util
 
 from util import Node, StackFrontier, QueueFrontier
 
@@ -91,9 +92,53 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-
     # TODO
-    raise NotImplementedError
+    print(f"Finding the shortest path between the source={source} and target={target}")
+
+    # Keep track of number of states (movies) explored
+    num_explored = 0
+
+    # Set the start node
+    startPerson: object = people[source]
+
+    # Set the target node
+    targetPerson: object = people[target]
+    
+    # Initialize frontier to just the starting position
+    start = Node(state=startPerson, parent=None, action=None)
+    frontier = QueueFrontier() #for BFS
+    frontier.add(start)
+
+    # Initialize an empty explored set
+    explored = set()
+
+    # Keep looping until solution found
+    while True:
+        # If nothing left in frontier, then no path
+        if frontier.empty():
+            raise Exception("no connection between source and target")
+
+        # Choose a node from the frontier
+        node = frontier.remove()
+        num_explored += 1
+
+        # If the node is target, then we have a solution
+        if node.state["name"] == target:
+            path = []
+            while node.parent is not None:
+                path.append((node.action, node.state["name"]))
+                node = node.parent
+            path.reverse()
+            return path
+
+        # Mark node as explored
+        explored.add(node.state["name"])
+
+        # Add neighbors to frontier
+        for movie_id, person_id in neighbors_for_person(node.state["name"]):
+            if not frontier.contains_state(people[person_id]) and people[person_id]["name"] not in explored:
+                child = Node(state=people[person_id], parent=node, action=movie_id)
+                frontier.add(child)
 
 
 def person_id_for_name(name):
@@ -122,11 +167,12 @@ def person_id_for_name(name):
         return person_ids[0]
 
 
-def neighbors_for_person(person_id):
+def neighbors_for_person(person_name):
     """
     Returns (movie_id, person_id) pairs for people
     who starred with a given person.
     """
+    person_id = person_id_for_name(person_name)
     movie_ids = people[person_id]["movies"]
     neighbors = set()
     for movie_id in movie_ids:
