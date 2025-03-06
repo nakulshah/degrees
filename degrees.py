@@ -169,7 +169,7 @@ def person_id_for_name(name):
 
 def neighbors_for_person(person_name):
     """
-    Returns (movie_id, person_id) pairs for people
+    Accepts the person name and returns (movie_id, person_id) pairs for people
     who starred with a given person.
     """
     person_id = person_id_for_name(person_name)
